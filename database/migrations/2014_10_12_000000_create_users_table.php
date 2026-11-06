@@ -6,11 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up()
     {
         Schema::create('users', function (Blueprint $table) {
@@ -19,19 +14,17 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            // Campos añadidos para el sistema de membresía
+            
+            // Campos de control y membresía
+            $table->boolean('is_admin')->default(false); // Define si es administrador
             $table->string('membership_status')->default('inactive'); // active, inactive, expired
-            $table->timestamp('membership_expires_at')->nullable();
+            $table->timestamp('membership_expires_at')->nullable(); // Fecha de expiración de membresía
+            
             $table->rememberToken();
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
         Schema::dropIfExists('users');
