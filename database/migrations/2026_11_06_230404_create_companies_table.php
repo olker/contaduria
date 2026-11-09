@@ -6,28 +6,19 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up()
     {
         Schema::create('companies', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('name');
-            $table->string('nit')->nullable(); // Número de Identificación Tributaria
-            $table->string('currency')->default('BOB'); // Moneda local
+            $table->string('name'); // Nombre de la empresa
+            $table->string('nit');  // NIT (Número de Identificación Tributaria)
+            $table->string('currency')->default('BOB'); // Moneda (Bolivianos por defecto)
+            $table->integer('fiscal_period'); // Año fiscal (ej. 2026)
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
         Schema::dropIfExists('companies');
