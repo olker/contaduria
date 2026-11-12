@@ -1,0 +1,41 @@
+CORRECCION OCR Y LADOS CONTABLES - LIBRO DE APERTURA
+
+Aplicar sobre el proyecto que ya tiene instaladas las actualizaciones anteriores del Libro de Apertura,
+incluyendo OCR, agrupación e impresión.
+
+ARCHIVOS A REEMPLAZAR:
+1. resources/views/cliente/opening/create.blade.php
+2. app/Http/Controllers/OpeningBalanceController.php
+
+CAMBIOS:
+A) OCR:
+- Ya no toma cualquier número al final de una línea.
+- Ignora líneas que mencionan fecha, año, NIT, título del balance, moneda y totales.
+- Exige texto de cuenta reconocible antes del importe.
+- Busca cuentas de Activo solo en la columna izquierda y cuentas de Pasivo/Patrimonio en la derecha.
+- Si no reconoce una cuenta, deja el importe en cero y la línea pendiente de selección manual.
+- Sigue siendo obligatorio revisar la información detectada antes de guardar.
+
+B) LADOS CONTABLES:
+- Al seleccionar una cuenta de Activo, el Debe queda editable y el Haber queda bloqueado.
+- Al seleccionar una cuenta de Pasivo o Patrimonio, el Haber queda editable y el Debe queda bloqueado.
+- El campo bloqueado conserva 0.00 y se envía al servidor como solo lectura.
+- Al cambiar de cuenta, se limpia el importe del lado que ya no corresponde.
+
+C) VALIDACION EN SERVIDOR:
+- Aunque se manipule el navegador, Laravel rechaza Activo en Haber.
+- Laravel rechaza Pasivo/Patrimonio en Debe.
+- Se mantiene la validación Debe = Haber y que cada línea tenga importe.
+
+INSTALACION:
+1. Haz copia de seguridad de los dos archivos.
+2. Extrae el ZIP en la raíz del proyecto y reemplaza los archivos indicados.
+3. Ejecuta:
+   php artisan view:clear
+   php artisan optimize:clear
+
+No hay migraciones nuevas. NO ejecutar migrate:fresh.
+
+NOTA OCR:
+El OCR no es infalible. Esta mejora reduce falsos positivos (por ejemplo, el año 2026),
+pero debes verificar nombres e importes reconocidos antes de guardar.

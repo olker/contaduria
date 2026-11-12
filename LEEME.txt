@@ -1,0 +1,19 @@
+CORRECCION DE applyAccountSide Y AGRUPACION DEL SELECTOR
+
+Reemplazar:
+- resources/views/cliente/opening/create.blade.php
+- app/Http/Controllers/OpeningBalanceController.php (se incluye sin cambios de lógica, para mantener la validación del servidor).
+
+Correcciones:
+1. La función de bloqueo de Debe/Haber ahora se expone como window.applyOpeningAccountSide para que el segundo bloque JavaScript (OCR) pueda llamarla. Antes estaba dentro de un IIFE y no era visible desde el OCR, causando "applyAccountSide is not defined".
+2. El listado vuelve a mostrar optgroups separados por tipo y subtipo: ACTIVO — Disponible, ACTIVO — Exigible, PASIVO — Exigible, etc.
+3. Las filas nuevas agregadas manualmente mantienen la misma agrupación.
+4. Se conserva el OCR y la validación de lados contables y del equilibrio Debe=Haber.
+
+Instalación:
+- Respaldar los archivos.
+- Extraer el ZIP en la raíz del proyecto.
+- Reemplazar los dos archivos.
+- Ejecutar php artisan view:clear y php artisan optimize:clear.
+
+No hay migraciones.

@@ -82,8 +82,37 @@
                             {{ session('success') }}
                         </div>
                     @endif
+                    @if(session('error'))
+                        <div class="bg-amber-950/80 border border-amber-800 text-amber-300 px-4 py-3 rounded-xl text-sm">
+                            {{ session('error') }}
+                        </div>
+                    @endif
 
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+                        <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+                            <div>
+                                <p class="text-xs uppercase tracking-wider text-emerald-400 font-semibold mb-2">Empresa registrada</p>
+                                <h3 class="text-xl font-bold text-white">{{ $company->name }}</h3>
+                                <p class="text-sm text-slate-400 mt-1">NIT: {{ $company->nit }} · {{ $company->society_type ?: 'Tipo de sociedad no especificado' }}</p>
+                            </div>
+                            <span class="text-xs bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 rounded-full px-3 py-1">Registro completado</span>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-5 text-sm">
+                            <div><span class="text-slate-500 block text-xs">Actividad económica</span><span class="text-slate-200">{{ $company->economic_activity ?: 'No especificada' }}</span></div>
+                            <div><span class="text-slate-500 block text-xs">Representante legal</span><span class="text-slate-200">{{ $company->legal_representative ?: 'No especificado' }}</span></div>
+                            <div><span class="text-slate-500 block text-xs">Dirección fiscal</span><span class="text-slate-200">{{ $company->fiscal_address ?: 'No especificada' }}</span></div>
+                            <div><span class="text-slate-500 block text-xs">Gestión / Moneda</span><span class="text-slate-200">{{ $company->fiscal_period }} · {{ $company->currency }}</span></div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl hover:border-indigo-500/50 transition">
+                            <h3 class="text-lg font-semibold text-white mb-2">Libro de Apertura</h3>
+                            <p class="text-xs text-slate-400 mb-4">Registra los activos, pasivos y patrimonio con los que inicia la empresa.</p>
+                            <a href="{{ route('opening.index') }}" class="inline-flex items-center justify-center bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold px-4 py-2.5 rounded-lg transition">
+                                Abrir Libro de Apertura
+                            </a>
+                        </div>
                         <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl hover:border-emerald-500/40 transition">
                             <h3 class="text-lg font-semibold text-white mb-2">Transacciones (Compras/Ventas)</h3>
                             <p class="text-xs text-slate-400 mb-4">Registro con captura de facturas y recibos vía cámara o archivo.</p>

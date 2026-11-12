@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\OpeningBalanceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,6 +45,15 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('company')->name('company.')->group(function () {
         Route::get('/create', [CompanyController::class, 'create'])->name('create');
         Route::post('/', [CompanyController::class, 'store'])->name('store');
+    });
+
+    // Libro de Apertura: saldo inicial independiente por empresa.
+    Route::prefix('libro-apertura')->name('opening.')->group(function () {
+        Route::get('/', [OpeningBalanceController::class, 'index'])->name('index');
+        Route::get('/crear', [OpeningBalanceController::class, 'create'])->name('create');
+        Route::get('/observaciones', [OpeningBalanceController::class, 'observations'])->name('observations');
+        Route::get('/imprimir', [OpeningBalanceController::class, 'print'])->name('print');
+        Route::post('/', [OpeningBalanceController::class, 'store'])->name('store');
     });
 });
 

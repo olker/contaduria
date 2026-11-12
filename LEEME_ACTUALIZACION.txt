@@ -1,0 +1,35 @@
+ACTUALIZACION LIBRO DE APERTURA: AGRUPACION E IMPRESION
+
+Aplicar sobre el proyecto que ya tiene funcionando el Libro de Apertura y el OCR corregido.
+
+ARCHIVOS A REEMPLAZAR:
+- app/Http/Controllers/OpeningBalanceController.php
+- routes/web.php
+- resources/views/cliente/opening/create.blade.php
+- resources/views/cliente/opening/index.blade.php
+
+ARCHIVO NUEVO:
+- resources/views/cliente/opening/print.blade.php
+
+CAMBIOS:
+1. El selector se organiza por ACTIVO, PASIVO y PATRIMONIO, con subtitulos derivados de la
+   jerarquia existente del Plan de Cuentas (parent_id).
+2. No se duplican cuentas ni se crean catalogos separados. Se reutilizan group_type y parent_id.
+3. Se agrega una vista imprimible con Activo a la izquierda y Pasivo/Capital a la derecha.
+4. En el Libro de Apertura registrado aparece el boton "Imprimir Libro de Apertura".
+5. Desde el navegador se puede imprimir o guardar como PDF.
+
+INSTALACION:
+1. Haz copia de seguridad de los cuatro archivos a reemplazar.
+2. Extrae este ZIP en la raiz del proyecto Laravel.
+3. Copia print.blade.php a resources/views/cliente/opening/.
+4. Ejecuta:
+   php artisan route:clear
+   php artisan view:clear
+   php artisan optimize:clear
+
+NO EJECUTAR MIGRACIONES. NO EJECUTAR migrate:fresh.
+No hay cambios de base de datos.
+
+La impresion usa la direccion fiscal guardada en la empresa y muestra Cochabamba - Bolivia.
+Revisa el resultado en vista previa antes de imprimir.
