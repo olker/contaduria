@@ -12,7 +12,7 @@ class JournalEntry extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id', 'company_id', 'date', 'description', 'type', 'details',
+        'user_id', 'company_id', 'entry_code', 'date', 'description', 'type', 'details',
     ];
 
     protected $casts = [

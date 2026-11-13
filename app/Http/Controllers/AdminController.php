@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 
 class AdminController extends Controller
 {
@@ -22,9 +23,19 @@ class AdminController extends Controller
             'membership_expires_at' => 'nullable|date',
         ]);
 
+        if (
+            $request->membership_status === 'active'
+            && $request->filled('membership_expires_at')
+            && Carbon::parse($request->membership_expires_at)->startOfDay()->lt(Carbon::today())
+        ) {
+            return back()->withErrors([
+                'membership_expires_at' => 'No puedes activar una membresía con una fecha de vencimiento anterior a hoy.',
+            ])->withInput();
+        }
+
         $user->update([
             'membership_status' => $request->membership_status,
-            'membership_expires_at' => $request->membership_expires_at,
+            'membership_expires_at' => $request->membership_expires_at ?: null,
         ]);
 
         return redirect()->route('admin.users.index')->with('success', 'Membresía actualizada con éxito.');

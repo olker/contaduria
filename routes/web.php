@@ -5,6 +5,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\OpeningBalanceController;
+use App\Http\Controllers\JournalController;
+use App\Http\Controllers\MembershipNoticeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,22 +40,32 @@ Route::middleware(['auth', 'admin'])
 // 4. OPERACIÓN DE ESTUDIANTES Y EMPRESA (Exclusivo CompanyController / User)
 Route::middleware(['auth'])->group(function () {
     
-    // Dashboard principal del usuario
+    // Panel y aviso de membresía: siempre accesibles con sesión iniciada.
     Route::get('/dashboard', [CompanyController::class, 'index'])->name('dashboard');
+    Route::get('/membresia/estado', [MembershipNoticeController::class, 'index'])->name('membership.pending');
 
     // Rutas de configuración de la empresa de práctica
-    Route::prefix('company')->name('company.')->group(function () {
+    Route::middleware('membership')->prefix('company')->name('company.')->group(function () {
         Route::get('/create', [CompanyController::class, 'create'])->name('create');
         Route::post('/', [CompanyController::class, 'store'])->name('store');
     });
 
     // Libro de Apertura: saldo inicial independiente por empresa.
-    Route::prefix('libro-apertura')->name('opening.')->group(function () {
+    Route::middleware('membership')->prefix('libro-apertura')->name('opening.')->group(function () {
         Route::get('/', [OpeningBalanceController::class, 'index'])->name('index');
         Route::get('/crear', [OpeningBalanceController::class, 'create'])->name('create');
         Route::get('/observaciones', [OpeningBalanceController::class, 'observations'])->name('observations');
         Route::get('/imprimir', [OpeningBalanceController::class, 'print'])->name('print');
         Route::post('/', [OpeningBalanceController::class, 'store'])->name('store');
+    });
+
+    // Libro Diario: el asiento de apertura existente se presenta como AD1.
+    Route::middleware('membership')->prefix('libro-diario')->name('journal.')->group(function () {
+        Route::get('/', [JournalController::class, 'index'])->name('index');
+        Route::get('/crear', [JournalController::class, 'create'])->name('create');
+        Route::get('/imprimir', [JournalController::class, 'print'])->name('print');
+        Route::get('/{entry}', [JournalController::class, 'show'])->whereNumber('entry')->name('show');
+        Route::post('/', [JournalController::class, 'store'])->name('store');
     });
 });
 

@@ -40,14 +40,14 @@
                 <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-xl">
                     <div class="text-emerald-400 text-xs uppercase tracking-wider font-semibold">Membresías Activas</div>
                     <div class="text-3xl font-extrabold text-emerald-400 mt-2">
-                        {{ $users->where('membership_status', 'active')->count() }}
+                        {{ $users->filter(fn($item) => $item->hasActiveMembership() && !$item->is_admin)->count() }}
                     </div>
                     <div class="text-[11px] text-slate-500 mt-1">Con acceso al sistema contable</div>
                 </div>
                 <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-xl">
                     <div class="text-amber-400 text-xs uppercase tracking-wider font-semibold">Inactivas / Pendientes</div>
                     <div class="text-3xl font-extrabold text-amber-400 mt-2">
-                        {{ $users->where('membership_status', '!=', 'active')->where('is_admin', false)->count() }}
+                        {{ $users->filter(fn($item) => !$item->hasActiveMembership() && !$item->is_admin)->count() }}
                     </div>
                     <div class="text-[11px] text-slate-500 mt-1">Requieren habilitación manual</div>
                 </div>
@@ -92,9 +92,9 @@
                                         @method('PATCH')
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <select name="membership_status" class="bg-slate-950 border border-slate-700 text-slate-200 text-xs rounded-lg px-3 py-1.5 focus:ring-emerald-500 focus:border-emerald-500">
-                                                <option value="active" {{ $u->membership_status == 'active' ? 'selected' : '' }}>Activa</option>
+                                                <option value="active" {{ $u->hasActiveMembership() ? 'selected' : '' }}>Activa</option>
                                                 <option value="inactive" {{ $u->membership_status == 'inactive' ? 'selected' : '' }}>Inactiva</option>
-                                                <option value="expired" {{ $u->membership_status == 'expired' ? 'selected' : '' }}>Expirada</option>
+                                                <option value="expired" {{ ($u->membership_status === 'expired' || $u->membershipIsExpired()) ? 'selected' : '' }}>Expirada</option>
                                             </select>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">

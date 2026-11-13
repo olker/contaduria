@@ -412,7 +412,8 @@
                 const ignoredWords = [
                     'fecha', 'realizado', 'nit', 'balance de apertura', 'expresado',
                     'bolivianos', 'cochabamba', 'total activo', 'total pasivo',
-                    'total debe', 'total haber', 'capital y reserva'
+                    'total debe', 'total haber', 'capital y reserva', 'gestion',
+                    'año', 'ano', 'direccion', 'avenida'
                 ];
 
                 for (const rawLine of lines) {
@@ -420,21 +421,20 @@
                     if (!line) continue;
 
                     const normalizedLine = normalize(line);
-                    // Evita capturar año, fecha, NIT, encabezados y totales como importes.
                     if (ignoredWords.some(word => normalizedLine.includes(normalize(word)))) continue;
+                    if (/\b(19|20)\d{2}\b/.test(line)) continue;
+                    if (/^\s*\d{5,}\s*$/.test(line)) continue;
 
-                    // El importe debe estar al final de una línea que también contenga el nombre de una cuenta.
                     const match = line.match(/(?:^|\s)(\d{1,3}(?:[.,]\d{3})+(?:,\d{1,2})?|\d+(?:,\d{1,2})?)(?:\s*[-–—.]*)\s*$/);
                     if (!match) continue;
 
                     const amount = parseAmount(match[1]);
-                    const accountText = line.slice(0, match.index + (match[0].startsWith(' ') ? 0 : 0))
-                        .replace(/[\s:|]+$/g, '').trim();
+                    const accountText = line.slice(0, match.index).replace(/[\s:|]+$/g, '').trim();
                     const normalizedAccount = normalize(accountText);
-
-                    // Nombre de cuenta: al menos 3 letras y no solo números/códigos.
                     const letterCount = (accountText.match(/[A-Za-zÁÉÍÓÚáéíóúÑñ]/g) || []).length;
+
                     if (!amount || letterCount < 4 || normalizedAccount.length < 4) continue;
+                    if (/\d{4,}/.test(accountText)) continue;
                     if (/^\d+$/.test(normalizedAccount)) continue;
                     if (/^(total|sumas|activo|pasivo|capital|circulante|disponible|exigible|realizable|fijo)$/.test(normalizedAccount)) continue;
 

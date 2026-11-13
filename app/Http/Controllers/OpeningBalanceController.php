@@ -241,6 +241,7 @@ class OpeningBalanceController extends Controller
                 'date' => $validated['date'],
                 'description' => $validated['description'],
                 'type' => 'apertura',
+                'entry_code' => 'AD1',
                 'details' => $details,
             ]);
 

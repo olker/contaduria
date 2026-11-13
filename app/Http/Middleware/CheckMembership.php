@@ -9,20 +9,12 @@ class CheckMembership
 {
     public function handle(Request $request, Closure $next)
     {
-        if (auth()->check()) {
-            $user = auth()->user();
+        $user = $request->user();
 
-            // Si es administrador, tiene vía libre siempre
-            if ($user->is_admin) {
-                return $next($request);
-            }
-
-            // Si la membresía NO está activa, lo mandamos a una vista de aviso amigable
-            if ($user->membership_status !== 'active') {
-                return redirect()->route('membership.pending');
-            }
+        if (!$user || $user->hasActiveMembership()) {
+            return $next($request);
         }
 
-        return $next($request);
+        return redirect()->route('membership.pending');
     }
 }

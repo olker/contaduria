@@ -3,14 +3,14 @@
         <div class="flex justify-between items-center">
             <div>
                 <h2 class="font-bold text-2xl text-white tracking-tight">
-                    @if(auth()->user()->membership_status === 'active' && isset($company) && $company)
+                    @if(auth()->user()->hasActiveMembership() && isset($company) && $company)
                         {{ $company->name }}
                     @else
                         Panel de Usuario • Estado de Suscripción
                     @endif
                 </h2>
                 <p class="text-xs text-slate-400 mt-1">
-                    @if(auth()->user()->membership_status === 'active' && isset($company) && $company)
+                    @if(auth()->user()->hasActiveMembership() && isset($company) && $company)
                         NIT: {{ $company->nit }} • Gestión: {{ $company->fiscal_period }}
                     @else
                         Gestión Contable y Prácticas Fiscales
@@ -18,8 +18,8 @@
                 </p>
             </div>
             
-            <span class="px-3 py-1 rounded-full text-xs font-semibold {{ auth()->user()->membership_status === 'active' ? 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-400' : 'bg-amber-500/10 border border-amber-500/20 text-amber-400' }}">
-                {{ auth()->user()->membership_status === 'active' ? 'Membresía Activa' : 'Pago Pendiente' }}
+            <span class="px-3 py-1 rounded-full text-xs font-semibold {{ auth()->user()->hasActiveMembership() ? 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-400' : 'bg-amber-500/10 border border-amber-500/20 text-amber-400' }}">
+                {{ auth()->user()->hasActiveMembership() ? 'Membresía Activa' : (auth()->user()->membershipIsExpired() ? 'Membresía Vencida' : 'Pago Pendiente') }}
             </span>
         </div>
     </x-slot>
@@ -27,7 +27,7 @@
     <div class="py-10 bg-slate-950 min-h-[calc(100vh-8rem)] text-slate-100 flex items-center justify-center">
         <div class="max-w-4xl w-full mx-auto px-4 sm:px-6 lg:px-8">
             
-            @if(auth()->user()->membership_status !== 'active')
+            @if(!auth()->user()->hasActiveMembership())
                 <!-- BLOQUEO POR PAGO PENDIENTE -->
                 <div class="bg-slate-900 border border-amber-500/30 shadow-2xl rounded-2xl p-8 sm:p-10 text-center space-y-6">
                     
@@ -36,15 +36,15 @@
                     </div>
 
                     <div class="space-y-2">
-                        <h3 class="text-2xl font-bold text-white">Acceso Restringido: Paquete Requerido</h3>
+                        <h3 class="text-2xl font-bold text-white">{{ auth()->user()->membershipIsExpired() ? 'Tu membresía ha vencido' : 'Membresía pendiente de activación' }}</h3>
                         <p class="text-xs sm:text-sm text-slate-300 max-w-lg mx-auto leading-relaxed">
-                            Hola <span class="text-white font-semibold">{{ auth()->user()->name }}</span>. Has ingresado a tu cuenta, pero **no puedes realizar operaciones, registrar facturas ni generar estados financieros** hasta adquirir o renovar tu suscripción.
+                            Hola <span class="text-white font-semibold">{{ auth()->user()->name }}</span>. Has ingresado a tu cuenta, pero No puedes realizar operaciones contables mientras tu membresía no esté vigente. Solicita su activación o renovación para continuar.
                         </p>
                     </div>
 
                     <!-- CAJA DE CONTACTO PARA PAGO -->
                     <div class="bg-slate-950 border border-slate-800 rounded-2xl p-6 max-w-md mx-auto space-y-3 shadow-inner">
-                        <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 block">Comunícate para pagar o renovar tu contrato</span>
+                        <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 block">Comunícate con administración para activar o renovar tu membresía</span>
                         <div class="text-2xl sm:text-3xl font-extrabold text-emerald-400 tracking-wider">
                             📞 60385703
                         </div>
@@ -121,7 +121,7 @@
                         <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl hover:border-indigo-500/40 transition">
                             <h3 class="text-lg font-semibold text-white mb-2">Libro Diario</h3>
                             <p class="text-xs text-slate-400 mb-4">Generación automática de asientos bajo el principio de partida doble.</p>
-                            <span class="text-xs text-indigo-400 font-semibold">Módulo activo</span>
+                            <a href="{{ route('journal.index') }}" class="inline-flex items-center justify-center bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold px-4 py-2.5 rounded-lg transition">Abrir Libro Diario</a>
                         </div>
                         <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl hover:border-purple-500/40 transition">
                             <h3 class="text-lg font-semibold text-white mb-2">Hoja de Trabajo</h3>

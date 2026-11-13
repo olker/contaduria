@@ -14,7 +14,6 @@ return new class extends Migration
             $table->string('name'); // Nombre de la empresa
             $table->string('nit');  // NIT (Número de Identificación Tributaria)
             $table->string('currency')->default('BOB'); // Moneda (Bolivianos por defecto)
-            $table->integer('fiscal_period'); // Año fiscal (ej. 2026)
             $table->timestamps();
         });
     }
